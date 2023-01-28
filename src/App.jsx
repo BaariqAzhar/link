@@ -1,4 +1,4 @@
-import { Tooltip, Skeleton } from "antd";
+import { Tooltip, Skeleton, Result } from "antd";
 import "antd/dist/antd.css";
 import photo from "../src/img/photo.jpg";
 import "./App.scss";
@@ -47,6 +47,12 @@ const MediaSocialList = () => {
 
   if (loading) {
     return <Skeleton active />;
+  }
+
+  if (error) {
+    return (
+      <Result status="warning" title="There are some problems on servers" />
+    );
   }
 
   const list = socialMedia
