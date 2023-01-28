@@ -1,87 +1,71 @@
-import { Tooltip } from "antd";
+import { Tooltip, Skeleton } from "antd";
 import "antd/dist/antd.css";
-import faceIcon from "../src/img/face.svg";
-import githubIcon from "../src/img/github.svg";
-import instaIcon from "../src/img/insta.svg";
-import linkedinIcon from "../src/img/linkedin.svg";
 import photo from "../src/img/photo.jpg";
-import portoIcon from "../src/img/porto.svg";
 import "./App.scss";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-const arrayDataV1 = [
-  {
-    link: "https://eri-eri.web.app/linkedin/index.html",
-    name: "LinkedIn",
-    img: linkedinIcon,
-  },
-  {
-    link: "https://eri-eri.web.app/github/index.html",
-    name: "GitHub",
-    img: githubIcon,
-  },
-  {
-    link: "https://eri-eri.web.app/portofolio/index.html",
-    name: "Portofolio",
-    img: portoIcon,
-  },
-  {
-    link: "https://eri-eri.web.app/instagram/index.html",
-    name: "Instagram",
-    img: instaIcon,
-  },
-  {
-    link: "https://eri-eri.web.app/facebook/index.html",
-    name: "Facebook",
-    img: faceIcon,
-  },
-];
+const useFetch = ({ url, payload }) => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-const arrayData = [
-  {
-    link: "https://www.linkedin.com/in/baariq-fairuuz-azhar-098561151/",
-    name: "LinkedIn",
-    img: linkedinIcon,
-  },
-  {
-    link: "https://github.com/BaariqAzhar",
-    name: "GitHub",
-    img: githubIcon,
-  },
-  {
-    link: "#",
-    name: "Portofolio",
-    img: portoIcon,
-  },
-  {
-    link: "https://www.instagram.com/baariqazhar.oo00/",
-    name: "Instagram",
-    img: instaIcon,
-  },
-  {
-    link: "https://web.facebook.com/raqioreki23",
-    name: "Facebook",
-    img: faceIcon,
-  },
-];
+  const fetchData = async () => {
+    try {
+      const res = await axios.post(url, payload);
+      setData(res.data);
+    } catch (error) {
+      setError(true);
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  return {
+    data,
+    loading,
+    error,
+  };
+};
 
 const MediaSocialList = () => {
-  const list = arrayData.map((data) => {
-    return (
-      <Tooltip
-        title={data.name === "Portofolio" ? "Under Maintenance" : "Click to Go"}
-      >
-        <div>
-          {console.log(data.link)}
-          <a href={data.link}>
-            <div className="socialMediaCard">
-              <img src={data.img} alt="" srcset="" />
-              <h2>{data.name}</h2>
-            </div>
-          </a>
-        </div>
-      </Tooltip>
-    );
+  const {
+    data: { socialMedia },
+    loading,
+    error,
+  } = useFetch({
+    url: "https://fd6d-18-141-193-247.ap.ngrok.io/api/get-dashboard",
+    payload: { lang: "en" },
   });
+
+  console.log("data in MediaSocialList", socialMedia);
+
+  if (loading) {
+    return <Skeleton active />;
+  }
+
+  const list = socialMedia
+    .filter((data) => data.name !== "Link")
+    .map((data) => {
+      return (
+        <Tooltip title="Click to Go">
+          <div>
+            <a href={data.link}>
+              <div className="socialMediaCard">
+                <img src={data.logo} alt="" srcset="" />
+                <h2>{data.name}</h2>
+              </div>
+            </a>
+          </div>
+        </Tooltip>
+      );
+    });
+
   return list;
 };
 
