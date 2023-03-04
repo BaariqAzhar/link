@@ -4,6 +4,7 @@ import photo from "../src/img/photo.jpg";
 import "./App.scss";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { LINK_API_PORTO } from "./helper/constants";
 
 const useFetch = ({ url, payload }) => {
   const [data, setData] = useState([]);
@@ -39,7 +40,8 @@ const MediaSocialList = () => {
     loading,
     error,
   } = useFetch({
-    url: "https://fd6d-18-141-193-247.ap.ngrok.io/api/get-dashboard",
+    // url: "https://fd6d-18-141-193-247.ap.ngrok.io/api/get-dashboard",
+    url: `${LINK_API_PORTO}get-dashboard`,
     payload: { lang: "en" },
   });
 
